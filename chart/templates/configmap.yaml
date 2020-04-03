@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hello.fullname" . }}
+  labels:
+{{ include "hello.labels" . | indent 4 }}
+data:
+  MESSAGE: Hello From Kubernetes!
