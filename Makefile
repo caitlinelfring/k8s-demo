@@ -21,4 +21,8 @@ helm-init:
 	helm init --service-account tiller
 	kubectl wait --for=condition=Ready --timeout=300s pod -l app=helm,name=tiller --namespace kube-system
 
-.PHONY: deploy delete restart template helm-init
+nginx:
+	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/mandatory.yaml
+	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/provider/cloud-generic.yaml
+
+.PHONY: deploy delete restart template helm-init nginx
