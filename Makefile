@@ -1,6 +1,6 @@
-NAMESPACE = rtr
+NAMESPACE = default
 CHART = hello-world
-DIR = chart
+DIR = charts/$(CHART)
 deploy:
 	helm upgrade -i --namespace $(NAMESPACE) $(CHART) $(DIR)
 
