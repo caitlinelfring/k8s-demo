@@ -14,6 +14,7 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        sidecar.istio.io/inject: {{ .sidecarEnabled | quote }}
       labels:
         app.kubernetes.io/name: {{ include "hello.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}

@@ -10,7 +10,7 @@ image:
   pullPolicy: Always
 
 containerPort: 8080
-
+sidecarEnabled: false
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
