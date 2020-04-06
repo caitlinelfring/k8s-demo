@@ -15,4 +15,10 @@ template:
 
 port-forward:
 	kubectl port-forward -n $(NAMESPACE) deployment/$(CHART) 8080:8080
-.PHONY: deploy delete restart template
+
+helm-init:
+	kubectl apply -f helm-init.yaml
+	helm init --service-account tiller
+	kubectl wait --for=condition=Ready --timeout=300s pod -l app=helm,name=tiller --namespace kube-system
+
+.PHONY: deploy delete restart template helm-init
