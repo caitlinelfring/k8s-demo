@@ -25,4 +25,7 @@ nginx:
 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/mandatory.yaml
 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/provider/cloud-generic.yaml
 
-.PHONY: deploy delete restart template helm-init nginx
+watch:
+	watch "kubectl get pods -A --sort-by=status.startTime | awk 'NR<2{print \$$0;next}{print \$$0| \"tail -r\"}'"
+
+.PHONY: deploy delete restart template helm-init nginx watch
