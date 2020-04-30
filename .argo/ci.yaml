@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: k8s-demo-ci-
+spec:
+  entrypoint: k8s-demo-ci
+  arguments:
+    parameters:
+      - name: revision
+        value: master
+      - name: repo
+        value: https://github.com/caitlin615/k8s-demo.git
+
+  templates:
+    - name: ci-builder
+      inputs:
+        parameters:
+          - name: cmd
+            value: "npm install && npm test"
+        artifacts:
+          - name: code
+            path: /src
+            git:
+              repo: "{{workflow.parameters.repo}}"
+              revision: "{{workflow.parameters.revision}}"
+      container:
+        image: node:13-alpine
+        command: [sh, -c]
+        args: ["{{inputs.parameters.cmd}}"]
+        workingDir: /src/app
