@@ -7,9 +7,9 @@ spec:
   # To access secrets as files, add a volume entry in spec.volumes[] and
   # then in the container template spec, add a mount using volumeMounts.
   volumes:
-  - name: dockerhub-login
-    secret:
-      secretName: dockerhub
+    - name: dockerhub-login
+      secret:
+        secretName: dockerhub
   arguments:
     parameters:
       - name: repo
@@ -18,41 +18,41 @@ spec:
         value: master
 
   templates:
-  - name: k8s-demo-ci
-    steps:
-    - - name: checkout
-        template: checkout
-    - - name: build-docker
-        template: build-docker
-        arguments:
-          artifacts:
-          - name: source
-            from: "{{steps.checkout.outputs.artifacts.source}}"
-      - name: test-unit
-        template: test-unit
-        arguments:
-          artifacts:
-          - name: source
-            from: "{{steps.checkout.outputs.artifacts.source}}"
+    - name: k8s-demo-ci
+      steps:
+        - - name: checkout
+            template: checkout
+        - - name: build-docker
+            template: build-docker
+            arguments:
+              artifacts:
+                - name: source
+                  from: "{{steps.checkout.outputs.artifacts.source}}"
+          - name: test-unit
+            template: test-unit
+            arguments:
+              artifacts:
+                - name: source
+                  from: "{{steps.checkout.outputs.artifacts.source}}"
 
-  - name: checkout
-    inputs:
-      artifacts:
-      - name: source
-        path: /src
-        git:
-          repo: "{{workflow.parameters.repo}}"
-          revision: "{{workflow.parameters.revision}}"
-    outputs:
-      artifacts:
-      - name: source
-        path: /src
-    container:
-      image: golang:1.9.2
-      command: ["/bin/sh", "-c"]
-      args: ["cd /src && git status && ls -l"]
+    - name: checkout
+      inputs:
+        artifacts:
+          - name: source
+            path: /src
+            git:
+              repo: "{{workflow.parameters.repo}}"
+              revision: "{{workflow.parameters.revision}}"
+      outputs:
+        artifacts:
+          - name: source
+            path: /src
+      container:
+        image: golang:1.9.2
+        command: ["/bin/sh", "-c"]
+        args: ["cd /src && git status && ls -l"]
 
-  - name: test-unit
+    - name: test-unit
       inputs:
         parameters:
           - name: cmd
@@ -69,25 +69,25 @@ spec:
         args: ["{{inputs.parameters.cmd}}"]
         workingDir: /src/app
 
-  - name: build-docker
-    container:
-      image: docker:17.10
-      command: [sh, -c]
-      args: ["until docker ps; do sleep 3; done; docker pull celfring/guestbook"]
-      env:
-      - name: DOCKER_HOST
-        value: 127.0.0.1
-      volumeMounts:
-      - name: dockerhub-login     # mount file containing secret at /secret/mountpath
-        mountPath: "/secret/dockerhub"
-    sidecars:
-    - name: dind
-      image: docker:18.09.4-dind
-      args: ["--config", "/secret/dockerhub"]
-      securityContext:
-        privileged: true
-      # mirrorVolumeMounts will mount the same volumes specified in the main container
-      # to the sidecar (including artifacts), at the same mountPaths. This enables
-      # dind daemon to (partially) see the same filesystem as the main container in
-      # order to use features such as docker volume binding.
-      mirrorVolumeMounts: true
+    - name: build-docker
+      container:
+        image: docker:17.10
+        command: [sh, -c]
+        args: ["until docker ps; do sleep 3; done; docker pull celfring/guestbook"]
+        env:
+          - name: DOCKER_HOST
+            value: 127.0.0.1
+        volumeMounts:
+          - name: dockerhub-login     # mount file containing secret at /secret/mountpath
+            mountPath: "/secret/dockerhub"
+      sidecars:
+        - name: dind
+          image: docker:18.09.4-dind
+          args: ["--config", "/secret/dockerhub"]
+          securityContext:
+            privileged: true
+          # mirrorVolumeMounts will mount the same volumes specified in the main container
+          # to the sidecar (including artifacts), at the same mountPaths. This enables
+          # dind daemon to (partially) see the same filesystem as the main container in
+          # order to use features such as docker volume binding.
+          mirrorVolumeMounts: true
