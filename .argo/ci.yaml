@@ -16,7 +16,7 @@ spec:
       inputs:
         parameters:
           - name: cmd
-            value: "npm install && npm test"
+            value: "git rev-parse --abbrev-ref HEAD; npm install && npm test"
         artifacts:
           - name: code
             path: /src
