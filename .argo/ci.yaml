@@ -26,26 +26,26 @@ spec:
             template: build-docker
             arguments:
               artifacts:
-                - name: artifacts
+                - name: source
                   from: "{{steps.checkout.outputs.artifacts.source}}"
           - name: test-unit
             template: test-unit
             arguments:
               artifacts:
-                - name: artifacts
+                - name: source
                   from: "{{steps.checkout.outputs.artifacts.source}}"
 
     - name: checkout
       inputs:
         artifacts:
-          - name: artifacts
+          - name: source
             path: /src
             git:
               repo: "{{workflow.parameters.repo}}"
               revision: "{{workflow.parameters.revision}}"
       outputs:
         artifacts:
-          - name: artifacts
+          - name: source
             path: /src
       container:
         image: golang:1.9.2
@@ -58,7 +58,7 @@ spec:
           - name: cmd
             value: "npm install && npm test"
         artifacts:
-          - name: artifacts
+          - name: source
             path: /src
             git:
               repo: "{{workflow.parameters.repo}}"
