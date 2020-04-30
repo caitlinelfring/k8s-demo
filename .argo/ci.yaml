@@ -12,7 +12,7 @@ spec:
         value: https://github.com/caitlin615/k8s-demo.git
 
   templates:
-    - name: ci-builder
+    - name: k8s-demo-ci
       inputs:
         parameters:
           - name: cmd
