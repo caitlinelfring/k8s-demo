@@ -70,6 +70,13 @@ spec:
         workingDir: /src/app
 
     - name: build-docker
+      inputs:
+        artifacts:
+          - name: source
+            path: /src
+            git:
+              repo: "{{workflow.parameters.repo}}"
+              revision: "{{workflow.parameters.revision}}"
       container:
         image: docker:17.10
         command: [sh, -c]
