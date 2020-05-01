@@ -77,6 +77,8 @@ spec:
               parameters:
                 - name: state
                   value: success
+                - name: description
+                  value: Pushed `celfring/k8s-demo:{{workflow.parameters.revision}}`
           - name: failed
             template: status
             when: "{{workflow.status}} != Succeeded"
@@ -84,11 +86,15 @@ spec:
               parameters:
                 - name: state
                   value: failure
+                - name: description
+                  value: FAILED
     - name: status
       inputs:
         parameters:
           - name: state
             value: pending
+          - name: description
+            value: Running
       container:
         image: cloudposse/github-status-updater
         env:
@@ -110,7 +116,7 @@ spec:
           - name:  GITHUB_CONTEXT
             value: "Argo"
           - name:  GITHUB_DESCRIPTION
-            value: "Commit status with target URL"
+            value: "{{inputs.parameters.description}}"
           - name:  GITHUB_TARGET_URL
             value: "https://my-ci.com/build/1"
 
