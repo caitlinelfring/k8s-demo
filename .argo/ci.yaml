@@ -73,7 +73,7 @@ spec:
       container:
         image: docker:17.10
         command: [sh, -c]
-        args: ["until docker ps; do sleep 3; done; docker pull celfring/guestbook"]
+        args: ["until docker ps; do sleep 3; done; docker pull --config /secret/dockerhub celfring/guestbook"]
         env:
           - name: DOCKER_HOST
             value: 127.0.0.1
@@ -83,7 +83,6 @@ spec:
       sidecars:
         - name: dind
           image: docker:18.09.4-dind
-          args: ["--config", "/secret/dockerhub"]
           securityContext:
             privileged: true
           # mirrorVolumeMounts will mount the same volumes specified in the main container
