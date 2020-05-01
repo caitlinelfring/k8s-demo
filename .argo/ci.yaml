@@ -13,10 +13,10 @@ spec:
   templates:
     - name: k8s-demo-ci
       steps:
-        - - name: start-status
-            template: status
         - - name: checkout
             template: checkout
+        - - name: start-status
+            template: status
         - - name: build-docker
             template: build-docker
             arguments:
