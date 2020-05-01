@@ -4,6 +4,7 @@ metadata:
   generateName: k8s-demo-ci-
 spec:
   entrypoint: k8s-demo-ci
+  onExit: exit-handler
   arguments:
     parameters:
       - name: revision
@@ -40,7 +41,7 @@ spec:
           - name: source
             path: /src
       container:
-        image: golang:1.9.2
+        image: alpine/git
         command: ["/bin/sh", "-c"]
         args: ["cd /src && git status && ls -l"]
 
@@ -60,6 +61,56 @@ spec:
         command: [sh, -c]
         args: ["{{inputs.parameters.cmd}}"]
         workingDir: /src/app
+
+    # exit handler related templates
+    # After the completion of the entrypoint template, the status of the
+    # workflow is made available in the global variable {{workflow.status}}.
+    # {{workflow.status}} will be one of: Succeeded, Failed, Error
+    - name: exit-handler
+      steps:
+        - name: success
+          template: status
+          when: "{{workflow.status}} == Succeeded"
+          arguments:
+            parameters:
+              - name: state
+                value: success
+        - name: faile
+          template: status
+          when: "{{workflow.status}} != Succeeded"
+          arguments:
+            parameters:
+              - name: state
+                value: failure
+    - name: status
+      inputs:
+        parameters:
+          - name: state
+            value: pending
+      container:
+        image: cloudposse/github-status-updater
+        env:
+          - name: GITHUB_ACTION
+            value: update_state
+          - name:  GITHUB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: github-access-token
+                key: password
+          - name:  GITHUB_OWNER
+            value: caitlin615
+          - name:  GITHUB_REPO
+            value: k8s-demo
+          - name:  GITHUB_REF
+            value: "{{workflow.parameters.revision}}"
+          - name:  GITHUB_STATE
+            value: "{{inputs.parameters.state}}"
+          - name:  GITHUB_CONTEXT
+            value: "Argo"
+          - name:  GITHUB_DESCRIPTION
+            value: "Commit status with target URL"
+          - name:  GITHUB_TARGET_URL
+            value: "https://my-ci.com/build/1"
 
     - name: build-docker
       inputs:
