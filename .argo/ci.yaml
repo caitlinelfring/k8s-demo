@@ -13,6 +13,8 @@ spec:
   templates:
     - name: k8s-demo-ci
       steps:
+        - - name: start-status
+            template: status
         - - name: checkout
             template: checkout
         - - name: build-docker
@@ -71,22 +73,22 @@ spec:
         - - name: success
             template: status
             when: "{{workflow.status}} == Succeeded"
-            # arguments:
-            #   parameters:
-            #     - name: state
-            #       value: success
+            arguments:
+              parameters:
+                - name: state
+                  value: success
           - name: failed
             template: status
             when: "{{workflow.status}} != Succeeded"
-            # arguments:
-            #   parameters:
-            #     - name: state
-            #       value: failure
+            arguments:
+              parameters:
+                - name: state
+                  value: failure
     - name: status
-      # inputs:
-      #   parameters:
-      #     - name: state
-      #       value: pending
+      inputs:
+        parameters:
+          - name: state
+            value: pending
       container:
         image: cloudposse/github-status-updater
         env:
@@ -104,8 +106,7 @@ spec:
           - name:  GITHUB_REF
             value: "{{workflow.parameters.revision}}"
           - name:  GITHUB_STATE
-            # value: "{{inputs.parameters.state}}"
-            value: pending
+            value: "{{inputs.parameters.state}}"
           - name:  GITHUB_CONTEXT
             value: "Argo"
           - name:  GITHUB_DESCRIPTION
