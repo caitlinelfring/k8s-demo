@@ -73,13 +73,20 @@ spec:
       container:
         image: docker:17.10
         command: [sh, -c]
-        args: ["until docker ps; do sleep 3; done; docker pull --config /secret/dockerhub celfring/guestbook"]
+        args: ["until docker ps; do sleep 3; done; docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}; docker pull celfring/guestbook"]
         env:
           - name: DOCKER_HOST
             value: 127.0.0.1
-        volumeMounts:
-          - name: dockerhub-login     # mount file containing secret at /secret/mountpath
-            mountPath: "/secret/dockerhub"
+          - name: DOCKERHUB_USER  # name of env var
+            valueFrom:
+              secretKeyRef:
+                name: dockerhub-generic
+                key: username
+          - name: DOCKERHUB_PASS  # name of env var
+            valueFrom:
+              secretKeyRef:
+                name: dockerhub-generic
+                key: password
       sidecars:
         - name: dind
           image: docker:18.09.4-dind
