@@ -77,8 +77,8 @@ spec:
               parameters:
                 - name: state
                   value: success
-                - name: description
-                  value: "Pushed celfring/k8s-demo:{{workflow.parameters.revision}}"
+                # - name: description
+                #   value: "Pushed celfring/k8s-demo:{{workflow.parameters.revision}}"
           - name: failed
             template: status
             when: "{{workflow.status}} != Succeeded"
@@ -116,7 +116,7 @@ spec:
           - name:  GITHUB_CONTEXT
             value: "Argo"
           - name:  GITHUB_DESCRIPTION
-            value: "{{inputs.parameters.description}}"
+            value: "description"
           - name:  GITHUB_TARGET_URL
             value: "https://my-ci.com/build/1"
 
