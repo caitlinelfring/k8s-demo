@@ -71,17 +71,17 @@ spec:
         - name: success
           template: status
           when: "{{workflow.status}} == Succeeded"
-          arguments:
-            parameters:
-              - name: state
-                value: success
+          # arguments:
+          #   parameters:
+          #     - name: state
+          #       value: success
         - name: faile
           template: status
           when: "{{workflow.status}} != Succeeded"
-          arguments:
-            parameters:
-              - name: state
-                value: failure
+          # arguments:
+          #   parameters:
+          #     - name: state
+          #       value: failure
     - name: status
       inputs:
         parameters:
