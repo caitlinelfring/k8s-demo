@@ -73,6 +73,7 @@ spec:
       container:
         image: docker:17.10
         command: [sh, -c]
+        workingDir: /src/app
         args:
           - |
             until docker ps; do sleep 3; done
