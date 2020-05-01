@@ -4,16 +4,8 @@ metadata:
   generateName: k8s-demo-ci-
 spec:
   entrypoint: k8s-demo-ci
-  # To access secrets as files, add a volume entry in spec.volumes[] and
-  # then in the container template spec, add a mount using volumeMounts.
-  volumes:
-    - name: dockerhub-login
-      secret:
-        secretName: dockerhub
   arguments:
     parameters:
-      - name: repo
-        value: https://github.com/caitlin615/k8s-demo.git
       - name: revision
         value: master
 
@@ -41,7 +33,7 @@ spec:
           - name: source
             path: /src
             git:
-              repo: "{{workflow.parameters.repo}}"
+              repo: https://github.com/caitlin615/k8s-demo.git
               revision: "{{workflow.parameters.revision}}"
       outputs:
         artifacts:
@@ -61,7 +53,7 @@ spec:
           - name: source
             path: /src
             git:
-              repo: "{{workflow.parameters.repo}}"
+              repo: https://github.com/caitlin615/k8s-demo.git
               revision: "{{workflow.parameters.revision}}"
       container:
         image: node:13-alpine
@@ -75,7 +67,7 @@ spec:
           - name: source
             path: /src
             git:
-              repo: "{{workflow.parameters.repo}}"
+              repo: https://github.com/caitlin615/k8s-demo.git
               revision: "{{workflow.parameters.revision}}"
       container:
         image: docker:17.10
