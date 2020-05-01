@@ -78,7 +78,7 @@ spec:
                 - name: state
                   value: success
                 - name: description
-                  value: Pushed `celfring/k8s-demo:{{workflow.parameters.revision}}`
+                  value: "Pushed celfring/k8s-demo:{{workflow.parameters.revision}}"
           - name: failed
             template: status
             when: "{{workflow.status}} != Succeeded"
