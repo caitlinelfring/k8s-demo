@@ -8,7 +8,7 @@
     "express-handlebars": "^4.0.2"
   },
   "devDependencies": {
-    "jsdom": "^16.2.2",
+    "jsdom": "^16.5.0",
     "mocha": "^7.1.1"
   },
   "scripts": {
